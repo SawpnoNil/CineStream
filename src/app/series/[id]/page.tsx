@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Play, Plus, ThumbsUp, ChevronLeft, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs } from "@/components/ui/tabs";
 import MainLayout from "@/app/_components/layout/MainLayout";
 import { series } from "@/lib/mock/data";
 import type { Episode } from "@/lib/types";
@@ -77,7 +77,7 @@ export default function SeriesDetailPage() {
         <div className="relative container flex h-full items-end px-4 pb-16 md:px-6">
           <div className="flex flex-col items-start gap-8 md:flex-row">
             {/* Poster */}
-            <div className="hidden h-96 w-64 overflow-hidden rounded-lg shadow-lg md:block">
+            <div className="mb-4 h-80 w-full overflow-hidden rounded-lg shadow-lg md:mb-0 md:h-96 md:w-64">
               <Image
                 src={
                   show.posterPath?.startsWith("/")

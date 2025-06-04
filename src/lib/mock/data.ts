@@ -1114,7 +1114,7 @@ export const recentContent = [
 // Website settings
 export const websiteSettings = {
   title: "StreamFlix",
-  logoUrl: "https://i.imgur.com/8xXRBLu.png",
+  logoUrl: "/logo.svg",
   theme: "system" as const,
   featuredContent,
 };

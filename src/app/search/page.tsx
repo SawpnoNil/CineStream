@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { Search as SearchIcon, Filter, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ import ContentCard from "@/app/_components/cards/ContentCard";
 import { movies, series, genres } from "@/lib/mock/data";
 import type { ContentWithType, SearchFilters } from "@/lib/types";
 
-export default function SearchPage() {
+function SearchPageContent() {
   const searchParams = useSearchParams();
   const queryParam = searchParams.get("q") ?? "";
 
@@ -212,7 +212,7 @@ export default function SearchPage() {
         </div>
 
         {/* Active filters */}
-        {(filters.genres?.length || filters.type) && (
+        {((filters.genres?.length ?? 0) > 0 || filters.type) && (
           <div className="mb-6 flex flex-wrap gap-2">
             {filters.type && (
               <div className="flex items-center rounded-full bg-zinc-800 px-3 py-1 text-sm text-white">
@@ -292,5 +292,26 @@ export default function SearchPage() {
         </div>
       </div>
     </MainLayout>
+  );
+}
+
+// Add a loading fallback component
+function SearchLoadingFallback() {
+  return (
+    <MainLayout>
+      <div className="container px-4 py-12 md:px-6">
+        <div className="flex items-center justify-center py-12">
+          <div className="border-t-primary h-8 w-8 animate-spin rounded-full border-4 border-zinc-700"></div>
+        </div>
+      </div>
+    </MainLayout>
+  );
+}
+
+export default function SearchPage() {
+  return (
+    <Suspense fallback={<SearchLoadingFallback />}>
+      <SearchPageContent />
+    </Suspense>
   );
 }

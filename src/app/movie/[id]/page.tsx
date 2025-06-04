@@ -6,7 +6,6 @@ import Image from "next/image";
 import { Play, Plus, ThumbsUp, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MainLayout from "@/app/_components/layout/MainLayout";
-import VideoPlayer from "@/app/_components/player/VideoPlayer";
 import { movies } from "@/lib/mock/data";
 
 export default function MovieDetailPage() {
@@ -43,7 +42,7 @@ export default function MovieDetailPage() {
   if (isPlaying) {
     return (
       <div className="fixed inset-0 z-50 bg-black">
-        <VideoPlayer
+        {/* <VideoPlayer
           title={movie.title}
           videoUrl={movie.videoUrl}
           videoQualityOptions={movie.videoQualityOptions}
@@ -54,7 +53,7 @@ export default function MovieDetailPage() {
               : movie.backdropPath || "/placeholder-backdrop.jpg"
           }
           onBack={handleBack}
-        />
+        /> */}
       </div>
     );
   }

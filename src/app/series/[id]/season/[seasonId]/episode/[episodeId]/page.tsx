@@ -1,53 +1,60 @@
 "use client";
 
 import { useParams, useRouter } from "next/navigation";
-import VideoPlayer from "@/app/_components/player/VideoPlayer";
 import { series } from "@/lib/mock/data";
 
 export default function EpisodePlayerPage() {
   const params = useParams();
   const router = useRouter();
-  
+
   // Get the series, season, and episode IDs from the URL
   const seriesId = Array.isArray(params.id) ? params.id[0] : params.id;
-  const seasonId = Array.isArray(params.seasonId) ? params.seasonId[0] : params.seasonId;
-  const episodeId = Array.isArray(params.episodeId) ? params.episodeId[0] : params.episodeId;
-  
+  const seasonId = Array.isArray(params.seasonId)
+    ? params.seasonId[0]
+    : params.seasonId;
+  const episodeId = Array.isArray(params.episodeId)
+    ? params.episodeId[0]
+    : params.episodeId;
+
   // Find the series
   const show = series.find((s) => s.id === seriesId);
-  
+
   // Find the season
-  const season = show?.seasons.find((s) => s.seasonNumber.toString() === seasonId);
-  
+  const season = show?.seasons.find(
+    (s) => s.seasonNumber.toString() === seasonId,
+  );
+
   // Find the episode
-  const episode = season?.episodes.find((e) => e.episodeNumber.toString() === episodeId);
-  
+  const episode = season?.episodes.find(
+    (e) => e.episodeNumber.toString() === episodeId,
+  );
+
   // Handle back navigation
   const handleBack = () => {
     router.back();
   };
-  
+
   // If the episode is not found
   if (!show || !season || !episode) {
     return (
-      <div className="fixed inset-0 bg-black flex flex-col items-center justify-center">
-        <h1 className="text-2xl font-bold mb-4">Episode not found</h1>
-        <button 
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-black">
+        <h1 className="mb-4 text-2xl font-bold">Episode not found</h1>
+        <button
           onClick={handleBack}
-          className="bg-white text-black px-4 py-2 rounded-md"
+          className="rounded-md bg-white px-4 py-2 text-black"
         >
           Go Back
         </button>
       </div>
     );
   }
-  
+
   // Format the episode title
-  const episodeTitle = `${show.title}: S${season.seasonNumber}:E${episode.episodeNumber} - ${episode.title}`;
-  
+  // const episodeTitle = `${show.title}: S${season.seasonNumber}:E${episode.episodeNumber} - ${episode.title}`;
+
   return (
     <div className="fixed inset-0 bg-black">
-      <VideoPlayer
+      {/* <VideoPlayer
         title={episodeTitle}
         videoUrl={episode.videoUrl}
         videoQualityOptions={episode.videoQualityOptions}
@@ -56,7 +63,7 @@ export default function EpisodePlayerPage() {
           ? `https://image.tmdb.org/t/p/original${episode.stillPath}` 
           : episode.stillPath || '/placeholder-still.jpg'}
         onBack={handleBack}
-      />
+      /> */}
     </div>
   );
-} 
+}

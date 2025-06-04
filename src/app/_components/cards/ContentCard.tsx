@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Play, Plus, ThumbsUp } from "lucide-react";
+import { Play, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   HoverCard,
@@ -19,7 +19,6 @@ interface ContentCardProps {
 }
 
 export default function ContentCard({ content, type }: ContentCardProps) {
-  const [isHovering, setIsHovering] = useState(false);
   const [imgError, setImgError] = useState(false);
 
   const contentUrl =
@@ -49,11 +48,7 @@ export default function ContentCard({ content, type }: ContentCardProps) {
   return (
     <HoverCard openDelay={300} closeDelay={200}>
       <HoverCardTrigger asChild>
-        <div
-          className="group relative cursor-pointer overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
-          onMouseEnter={() => setIsHovering(true)}
-          onMouseLeave={() => setIsHovering(false)}
-        >
+        <div className="group relative cursor-pointer overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
           <Link href={contentUrl}>
             <div className="relative aspect-[2/3]">
               <Image

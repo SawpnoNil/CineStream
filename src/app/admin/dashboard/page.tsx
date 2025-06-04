@@ -11,7 +11,6 @@ import {
   Settings,
   Search,
   Plus,
-  Edit,
   Trash2,
   Home,
   LayoutDashboard,
@@ -28,7 +27,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";

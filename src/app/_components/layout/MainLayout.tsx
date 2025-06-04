@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import Header from "./Header";
 import Footer from "./Footer";
 import { websiteSettings } from "@/lib/mock/data";
@@ -10,9 +11,7 @@ interface MainLayoutProps {
 }
 
 export default function MainLayout({ children }: MainLayoutProps) {
-  const [theme, setTheme] = useState<"light" | "dark" | "system">(
-    websiteSettings.theme,
-  );
+  const [theme] = useState<"light" | "dark" | "system">(websiteSettings.theme);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -59,9 +58,11 @@ export default function MainLayout({ children }: MainLayoutProps) {
       <div className="fixed inset-0 flex items-center justify-center bg-black">
         <div className="flex flex-col items-center">
           {websiteSettings.logoUrl ? (
-            <img
+            <Image
               src={websiteSettings.logoUrl}
               alt={websiteSettings.title}
+              width={64}
+              height={64}
               className="h-12 w-auto animate-pulse sm:h-16"
             />
           ) : (
