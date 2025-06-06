@@ -1115,6 +1115,8 @@ export const recentContent = [
 export const websiteSettings = {
   title: "StreamFlix",
   logoUrl: "/logo.svg",
+  description:
+    "StreamFlix is a streaming service that offers a wide range of award-winning TV shows, movies, anime, and more.",
   theme: "system" as const,
   featuredContent,
 };

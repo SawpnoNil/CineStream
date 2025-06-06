@@ -5,8 +5,16 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { Play, Plus, ThumbsUp, ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import MainLayout from "@/app/_components/layout/MainLayout";
 import { movies } from "@/lib/mock/data";
+import ImageWithFallback from "@/components/custom/ImageWithFallback";
 
 export default function MovieDetailPage() {
   const params = useParams();
@@ -68,7 +76,7 @@ export default function MovieDetailPage() {
   return (
     <MainLayout>
       {/* Hero section with backdrop */}
-      <div className="relative h-[70vh] min-h-[500px] w-full">
+      <div className="relative w-full md:h-[60vh] md:min-h-[500px]">
         {/* Backdrop image */}
         <div className="absolute inset-0">
           <Image
@@ -87,20 +95,11 @@ export default function MovieDetailPage() {
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent" />
         </div>
 
-        {/* Back button */}
-        <button
-          onClick={handleBack}
-          className="absolute top-20 left-4 z-10 rounded-full bg-black/50 p-2 transition-colors hover:bg-black/70"
-        >
-          <ChevronLeft className="h-6 w-6 text-white" />
-          <span className="sr-only">Back</span>
-        </button>
-
         {/* Content */}
-        <div className="relative container flex h-full items-end px-4 pb-16 md:px-6">
-          <div className="flex flex-col items-start gap-8 md:flex-row">
+        <div className="relative container mx-auto flex items-end px-4 pt-10 pb-16 md:px-6 md:pt-14">
+          <div className="flex flex-col items-center gap-4 md:flex-row md:gap-8">
             {/* Poster */}
-            <div className="mb-4 h-80 w-full overflow-hidden rounded-lg shadow-lg md:mb-0 md:h-96 md:w-64">
+            <div className="w-48 overflow-hidden rounded-lg shadow-lg md:mb-0 md:h-96 md:w-72">
               <Image
                 src={
                   movie.posterPath?.startsWith("/")
@@ -116,7 +115,7 @@ export default function MovieDetailPage() {
             </div>
 
             {/* Details */}
-            <div className="flex-1 text-white">
+            <div className="flex flex-1 flex-col items-center text-white md:items-start">
               <h1 className="mb-2 text-4xl font-bold md:text-5xl">
                 {movie.title}
               </h1>
@@ -173,30 +172,44 @@ export default function MovieDetailPage() {
       </div>
 
       {/* Cast section */}
-      <div className="container px-4 py-12 md:px-6">
+      <div className="relative container mx-auto px-4 py-12 md:px-6">
         <h2 className="mb-6 text-2xl font-bold">Cast</h2>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-          {movie.cast.map((person) => (
-            <div key={person.id} className="text-center">
-              <div className="mx-auto mb-2 aspect-square h-24 w-24 overflow-hidden rounded-full">
-                <Image
-                  src={
-                    person.profilePath?.startsWith("/")
-                      ? `https://image.tmdb.org/t/p/w200${person.profilePath}`
-                      : person.profilePath || "/placeholder-profile.jpg"
-                  }
-                  alt={person.name}
-                  width={96}
-                  height={96}
-                  className="h-full w-full object-cover"
-                  unoptimized
-                />
-              </div>
-              <h3 className="font-medium">{person.name}</h3>
-              <p className="text-sm text-gray-400">{person.character}</p>
-            </div>
-          ))}
-        </div>
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          className="w-full"
+        >
+          <CarouselContent>
+            {movie.cast.map((person) => (
+              <CarouselItem
+                key={person.id}
+                className="pl-4 sm:basis-1/3 md:basis-1/4 lg:basis-1/6"
+              >
+                <div className="text-center">
+                  <div className="mx-auto mb-2 aspect-square h-24 w-24 overflow-hidden rounded-full">
+                    <ImageWithFallback
+                      src={`https://image.tmdb.org/t/p/w200${person.profilePath}`}
+                      alt={person.name}
+                      fallbackSrc="/placeholder-profile.png"
+                      width={96}
+                      height={96}
+                      className="h-full w-full object-cover"
+                      unoptimized
+                    />
+                  </div>
+                  <h3 className="font-medium">{person.name}</h3>
+                  <p className="text-sm text-gray-400">{person.character}</p>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <div className="hidden md:block">
+            <CarouselPrevious className="absolute top-1/2 left-0 -translate-y-1/2 bg-black/50 text-white hover:bg-black/70" />
+            <CarouselNext className="absolute top-1/2 right-0 -translate-y-1/2 bg-black/50 text-white hover:bg-black/70" />
+          </div>
+        </Carousel>
       </div>
     </MainLayout>
   );

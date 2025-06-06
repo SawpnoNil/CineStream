@@ -12,10 +12,9 @@ import { websiteSettings } from "@/lib/mock/data";
 
 const navItems = [
   { label: "Home", href: "/" },
-  { label: "Movies", href: "/movie" },
+  { label: "Movies", href: "/movies" },
   { label: "TV Series", href: "/series" },
-  { label: "New & Popular", href: "/new" },
-  { label: "Tailwind v4", href: "/tailwind-v4" },
+  { label: "New & Popular", href: "/new-popular" },
 ];
 
 export default function Header() {
@@ -54,7 +53,7 @@ export default function Header() {
           : "bg-gradient-to-b from-black/80 to-transparent"
       }`}
     >
-      <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+      <div className="container mx-auto flex h-16 items-center justify-between px-4 md:px-6">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center">
             {websiteSettings.logoUrl ? (

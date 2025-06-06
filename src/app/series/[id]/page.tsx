@@ -7,6 +7,13 @@ import Link from "next/link";
 import { Play, Plus, ThumbsUp, ChevronLeft, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import MainLayout from "@/app/_components/layout/MainLayout";
 import { series } from "@/lib/mock/data";
 import type { Episode } from "@/lib/types";
@@ -200,36 +207,53 @@ export default function SeriesDetailPage() {
       {/* Cast section */}
       <div className="container px-4 py-12 md:px-6">
         <h2 className="mb-6 text-2xl font-bold">Cast</h2>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-          {show.cast.map((person) => (
-            <div key={person.id} className="text-center">
-              <div className="mx-auto mb-2 aspect-square h-24 w-24 overflow-hidden rounded-full">
-                {person.profilePath ? (
-                  <Image
-                    src={
-                      person.profilePath?.startsWith("/")
-                        ? `https://image.tmdb.org/t/p/w200${person.profilePath}`
-                        : person.profilePath || "/placeholder-profile.jpg"
-                    }
-                    alt={person.name}
-                    width={96}
-                    height={96}
-                    className="h-full w-full object-cover"
-                    unoptimized
-                  />
-                ) : (
-                  <div className="flex h-full w-full items-center justify-center bg-gray-800">
-                    <span className="text-gray-400">
-                      {person.name.charAt(0)}
-                    </span>
+        <Carousel
+          opts={{
+            align: "start",
+            loop: true,
+          }}
+          className="w-full"
+        >
+          <CarouselContent>
+            {show.cast.map((person) => (
+              <CarouselItem
+                key={person.id}
+                className="pl-4 sm:basis-1/3 md:basis-1/4 lg:basis-1/6"
+              >
+                <div className="text-center">
+                  <div className="mx-auto mb-2 aspect-square h-24 w-24 overflow-hidden rounded-full">
+                    {person.profilePath ? (
+                      <Image
+                        src={
+                          person.profilePath?.startsWith("/")
+                            ? `https://image.tmdb.org/t/p/w200${person.profilePath}`
+                            : person.profilePath || "/placeholder-profile.jpg"
+                        }
+                        alt={person.name}
+                        width={96}
+                        height={96}
+                        className="h-full w-full object-cover"
+                        unoptimized
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-gray-800">
+                        <span className="text-gray-400">
+                          {person.name.charAt(0)}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              <h3 className="font-medium">{person.name}</h3>
-              <p className="text-sm text-gray-400">{person.character}</p>
-            </div>
-          ))}
-        </div>
+                  <h3 className="font-medium">{person.name}</h3>
+                  <p className="text-sm text-gray-400">{person.character}</p>
+                </div>
+              </CarouselItem>
+            ))}
+          </CarouselContent>
+          <div className="hidden md:block">
+            <CarouselPrevious className="absolute top-1/2 left-0 -translate-y-1/2 bg-black/50 text-white hover:bg-black/70" />
+            <CarouselNext className="absolute top-1/2 right-0 -translate-y-1/2 bg-black/50 text-white hover:bg-black/70" />
+          </div>
+        </Carousel>
       </div>
     </MainLayout>
   );

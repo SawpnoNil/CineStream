@@ -8,17 +8,11 @@ import {
   Tv,
   Users,
   BarChart,
-  Settings,
   Search,
   Plus,
-  Trash2,
-  Home,
-  LayoutDashboard,
-  LogOut,
-  ChevronLeft,
-  ChevronRight,
-  Menu,
-  Pencil,
+  ArrowUpRight,
+  CalendarDays,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,454 +21,395 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { movies, series, websiteSettings } from "@/lib/mock/data";
-import type { Movie, Series } from "@/lib/types";
+import { movies, series } from "@/lib/mock/data";
 
-// Admin sidebar navigation items
-const sidebarItems = [
-  { icon: LayoutDashboard, label: "Dashboard", count: null },
-  { icon: Film, label: "Movies", count: movies.length },
-  { icon: Tv, label: "TV Series", count: series.length },
-  { icon: Users, label: "Users", count: 1205 },
-  { icon: BarChart, label: "Analytics", count: null },
-  { icon: Settings, label: "Settings", count: null },
+// Dashboard summary cards
+const summaryCards = [
+  {
+    title: "Total Movies",
+    value: movies.length,
+    change: "+12%",
+    icon: Film,
+    trend: "up",
+    link: "/admin/movies",
+  },
+  {
+    title: "Total Series",
+    value: series.length,
+    change: "+7%",
+    icon: Tv,
+    trend: "up",
+    link: "/admin/series",
+  },
+  {
+    title: "Users",
+    value: 1205,
+    change: "+22%",
+    icon: Users,
+    trend: "up",
+    link: "/admin/users",
+  },
+  {
+    title: "Views Today",
+    value: 843,
+    change: "-3%",
+    icon: Eye,
+    trend: "down",
+    link: "/admin/analytics",
+  },
 ];
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState("movies");
+  const [activeTab, setActiveTab] = useState("overview");
   const [searchQuery, setSearchQuery] = useState("");
-  const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // Filter content based on search query
-  const filteredMovies = movies.filter((movie) =>
-    movie.title.toLowerCase().includes(searchQuery.toLowerCase()),
+  // Get total episodes count
+  const totalEpisodes = series.reduce(
+    (total, show) =>
+      total +
+      show.seasons.reduce((count, season) => count + season.episodes.length, 0),
+    0,
   );
 
-  const filteredSeries = series.filter((show) =>
-    show.title.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  // Get most viewed content (mock data)
+  const mostViewedContent = [
+    { id: 1, title: "Interstellar", type: "movie", views: 1256 },
+    { id: 2, title: "Breaking Bad", type: "series", views: 987 },
+    { id: 3, title: "The Dark Knight", type: "movie", views: 879 },
+    { id: 4, title: "Stranger Things", type: "series", views: 764 },
+    { id: 5, title: "Inception", type: "movie", views: 692 },
+  ];
+
+  // Recent user activity (mock data)
+  const recentActivity = [
+    {
+      user: "user123",
+      action: "watched",
+      content: "Inception",
+      time: "2 hours ago",
+    },
+    {
+      user: "cinephile22",
+      action: "signed up",
+      content: null,
+      time: "3 hours ago",
+    },
+    {
+      user: "movielover",
+      action: "rated",
+      content: "The Dark Knight",
+      time: "5 hours ago",
+    },
+    {
+      user: "seriesfan",
+      action: "watched",
+      content: "Breaking Bad S3:E4",
+      time: "8 hours ago",
+    },
+    {
+      user: "newuser42",
+      action: "subscribed",
+      content: null,
+      time: "1 day ago",
+    },
+  ];
 
   return (
-    <div className="flex min-h-screen bg-zinc-950 text-white">
-      {/* Sidebar */}
-      <div
-        className={`${sidebarOpen ? "w-64" : "w-20"} hidden border-r border-zinc-800 p-4 transition-all duration-300 md:block`}
-      >
-        <div className="mb-8 flex items-center justify-center md:justify-start">
-          <Link
-            href="/"
-            className={`flex items-center gap-2 ${!sidebarOpen && "justify-center"}`}
-          >
-            {websiteSettings.logoUrl ? (
-              <Image
-                src={websiteSettings.logoUrl}
-                alt={websiteSettings.title}
-                width={40}
-                height={40}
-                className="h-8 w-auto"
-              />
-            ) : (
-              <Film className="h-8 w-8 text-white" />
-            )}
-            {sidebarOpen && (
-              <span className="text-xl font-bold">
-                {websiteSettings.title} Admin
-              </span>
-            )}
-          </Link>
-        </div>
-
-        <nav>
-          <ul className="space-y-2">
-            {sidebarItems.map((item) => (
-              <li key={item.label}>
-                <button
-                  className={`flex w-full items-center justify-between rounded-lg px-4 py-3 transition-colors hover:bg-zinc-800/60 ${
-                    activeTab.toLowerCase() === item.label.toLowerCase()
-                      ? "bg-zinc-800 text-white"
-                      : "text-zinc-400"
-                  }`}
-                  onClick={() => setActiveTab(item.label.toLowerCase())}
-                >
-                  <div
-                    className={`flex items-center ${!sidebarOpen && "w-full justify-center"}`}
-                  >
-                    <item.icon
-                      className={`h-5 w-5 ${sidebarOpen ? "mr-3" : ""}`}
-                    />
-                    {sidebarOpen && <span>{item.label}</span>}
-                  </div>
-                  {sidebarOpen && item.count !== null && (
-                    <Badge variant="outline" className="bg-zinc-800 text-xs">
-                      {item.count}
-                    </Badge>
-                  )}
-                </button>
-              </li>
-            ))}
-
-            <li className="mt-4 border-t border-zinc-800 pt-4">
-              <Link
-                href="/"
-                className={`flex items-center ${!sidebarOpen ? "justify-center" : ""} w-full rounded-lg px-4 py-3 text-zinc-400 transition-colors hover:bg-zinc-800/60 hover:text-white`}
-              >
-                <Home className={`h-5 w-5 ${sidebarOpen ? "mr-3" : ""}`} />
-                {sidebarOpen && <span>Back to Site</span>}
-              </Link>
-            </li>
-
-            <li>
-              <button
-                className={`flex items-center ${!sidebarOpen ? "justify-center" : ""} w-full rounded-lg px-4 py-3 text-zinc-400 transition-colors hover:bg-zinc-800/60 hover:text-white`}
-              >
-                <LogOut className={`h-5 w-5 ${sidebarOpen ? "mr-3" : ""}`} />
-                {sidebarOpen && <span>Logout</span>}
-              </button>
-            </li>
-          </ul>
-        </nav>
-
-        <Button
-          variant="ghost"
-          size="icon"
-          className="absolute bottom-4 left-4 text-zinc-400 hover:text-white"
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-        >
-          {sidebarOpen ? (
-            <ChevronLeft className="h-5 w-5" />
-          ) : (
-            <ChevronRight className="h-5 w-5" />
-          )}
+    <div className="space-y-6">
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-3xl font-bold tracking-tight">
+          Dashboard Overview
+        </h1>
+        <Button className="hidden items-center md:flex">
+          <Plus className="mr-2 h-4 w-4" /> Add Content
         </Button>
       </div>
 
-      {/* Main content */}
-      <div className="flex flex-1 flex-col">
-        {/* Header */}
-        <header className="sticky top-0 z-10 border-b border-zinc-800 bg-zinc-950/95 p-4 backdrop-blur-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-zinc-400 hover:text-white md:hidden"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
-              <h1 className="text-xl font-bold md:text-2xl">Dashboard</h1>
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="relative">
-                <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-zinc-400" />
-                <Input
-                  type="search"
-                  placeholder="Search content..."
-                  className="w-[180px] rounded-full border-zinc-700 bg-zinc-900 py-2 pr-4 pl-10 text-white md:w-64"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-              <Button className="hidden items-center bg-zinc-800 text-white hover:bg-zinc-700 md:flex">
-                <Plus className="mr-2 h-4 w-4" /> Add Content
-              </Button>
-              <Button
-                size="icon"
-                className="bg-zinc-800 text-white hover:bg-zinc-700 md:hidden"
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </header>
-
-        {/* Content */}
-        <div className="overflow-auto p-4 md:p-6">
-          <Tabs defaultValue="movies" className="space-y-6">
-            <TabsList className="rounded-lg border border-zinc-700/20 bg-zinc-800/50 p-1 backdrop-blur-sm">
-              <TabsTrigger
-                value="movies"
-                onClick={() => setActiveTab("movies")}
-              >
-                Movies
-              </TabsTrigger>
-              <TabsTrigger
-                value="series"
-                onClick={() => setActiveTab("series")}
-              >
-                TV Series
-              </TabsTrigger>
-              <TabsTrigger
-                value="analytics"
-                onClick={() => setActiveTab("analytics")}
-              >
-                Analytics
-              </TabsTrigger>
-            </TabsList>
-
-            {/* Movies Tab */}
-            <TabsContent value="movies">
-              <div className="grid grid-cols-1 gap-4">
-                <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle>Movies</CardTitle>
-                    <CardDescription className="text-zinc-400">
-                      Manage your movie content
-                    </CardDescription>
-                  </CardHeader>
-
-                  <CardContent>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left">
-                        <thead>
-                          <tr className="border-b border-zinc-800">
-                            <th className="pr-4 pb-3 font-medium">Title</th>
-                            <th className="hidden px-4 pb-3 font-medium md:table-cell">
-                              Release Date
-                            </th>
-                            <th className="hidden px-4 pb-3 font-medium sm:table-cell">
-                              Rating
-                            </th>
-                            <th className="hidden px-4 pb-3 font-medium lg:table-cell">
-                              Popularity
-                            </th>
-                            <th className="pb-3 pl-4 text-right font-medium">
-                              Actions
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {filteredMovies.map((movie) => (
-                            <MovieRow key={movie.id} movie={movie} />
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-
-            {/* Series Tab */}
-            <TabsContent value="series">
-              <div className="grid grid-cols-1 gap-4">
-                <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle>TV Series</CardTitle>
-                    <CardDescription className="text-zinc-400">
-                      Manage your TV series content
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="overflow-x-auto">
-                      <table className="w-full text-left">
-                        <thead>
-                          <tr className="border-b border-zinc-800">
-                            <th className="pr-4 pb-3 font-medium">Title</th>
-                            <th className="hidden px-4 pb-3 font-medium md:table-cell">
-                              First Air Date
-                            </th>
-                            <th className="hidden px-4 pb-3 font-medium sm:table-cell">
-                              Status
-                            </th>
-                            <th className="hidden px-4 pb-3 font-medium lg:table-cell">
-                              Seasons
-                            </th>
-                            <th className="pb-3 pl-4 text-right font-medium">
-                              Actions
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {filteredSeries.map((show) => (
-                            <SeriesRow key={show.id} series={show} />
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-
-            {/* Analytics Tab */}
-            <TabsContent value="analytics">
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle>Content Overview</CardTitle>
-                    <CardDescription className="text-zinc-400">
-                      Summary of your content library
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <span>Total Movies</span>
-                        <span className="font-medium">{movies.length}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>Total TV Series</span>
-                        <span className="font-medium">{series.length}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>Total Episodes</span>
-                        <span className="font-medium">
-                          {series.reduce(
-                            (total, show) =>
-                              total +
-                              show.seasons.reduce(
-                                (count, season) =>
-                                  count + season.episodes.length,
-                                0,
-                              ),
-                            0,
-                          )}
-                        </span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="border-zinc-800 bg-zinc-900/50 backdrop-blur-sm">
-                  <CardHeader>
-                    <CardTitle>User Activity</CardTitle>
-                    <CardDescription className="text-zinc-400">
-                      User engagement metrics
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <span>Active Users</span>
-                        <span className="font-medium">1,205</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>New Sign-ups (Last 7 days)</span>
-                        <span className="font-medium">124</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>Total Watch Time (hrs)</span>
-                        <span className="font-medium">8,432</span>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-            </TabsContent>
-          </Tabs>
-        </div>
+      {/* Summary Cards */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {summaryCards.map((card) => (
+          <Link href={card.link} key={card.title} className="group">
+            <Card className="bg-card/50 hover:border-primary/50 transition-all hover:shadow-md">
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <card.icon className="text-muted-foreground h-5 w-5" />
+                  <span
+                    className={`flex items-center gap-1 text-xs ${
+                      card.trend === "up" ? "text-emerald-500" : "text-red-500"
+                    }`}
+                  >
+                    {card.change}
+                  </span>
+                </div>
+                <CardTitle className="text-2xl font-bold">
+                  {card.value}
+                </CardTitle>
+                <CardDescription>{card.title}</CardDescription>
+              </CardHeader>
+              <CardFooter className="pt-1">
+                <span className="text-muted-foreground group-hover:text-primary text-xs">
+                  View details
+                </span>
+                <ArrowUpRight className="text-muted-foreground group-hover:text-primary ml-auto h-4 w-4 opacity-0 transition-opacity group-hover:opacity-100" />
+              </CardFooter>
+            </Card>
+          </Link>
+        ))}
       </div>
+
+      {/* Main Content */}
+      <Tabs
+        value={activeTab}
+        onValueChange={setActiveTab}
+        className="space-y-6"
+      >
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="activity">User Activity</TabsTrigger>
+          <TabsTrigger value="content">Content</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-4">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <Card className="md:col-span-2">
+              <CardHeader>
+                <CardTitle>Content Summary</CardTitle>
+                <CardDescription>
+                  Overview of your library and content stats
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                  <div className="space-y-1">
+                    <div className="text-muted-foreground text-xs">
+                      Total Movies
+                    </div>
+                    <div className="text-2xl font-bold">{movies.length}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-muted-foreground text-xs">
+                      Total Series
+                    </div>
+                    <div className="text-2xl font-bold">{series.length}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-muted-foreground text-xs">
+                      Total Episodes
+                    </div>
+                    <div className="text-2xl font-bold">{totalEpisodes}</div>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="text-muted-foreground text-xs">
+                      File Storage
+                    </div>
+                    <div className="text-2xl font-bold">238 GB</div>
+                  </div>
+                </div>
+
+                <div className="mt-6">
+                  <div className="mb-2 flex items-center justify-between text-sm">
+                    <div className="text-muted-foreground">Storage Usage</div>
+                    <div className="font-medium">72%</div>
+                  </div>
+                  <div className="bg-secondary h-2 w-full overflow-hidden rounded-full">
+                    <div className="bg-primary h-full w-[72%] rounded-full" />
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline" size="sm" asChild>
+                  <Link href="/admin/uploads">Manage Storage</Link>
+                </Button>
+              </CardFooter>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>User Growth</CardTitle>
+                <CardDescription>New users over time</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex h-[128px] items-center justify-center">
+                  <div className="text-muted-foreground text-center">
+                    <CalendarDays className="mx-auto h-12 w-12 opacity-50" />
+                    <p className="mt-2">Detailed analytics available</p>
+                  </div>
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline" size="sm" asChild className="w-full">
+                  <Link href="/admin/analytics">View Analytics</Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Most Viewed Content</CardTitle>
+                <CardDescription>Top performing content</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {mostViewedContent.map((item) => (
+                    <div
+                      key={item.id}
+                      className="flex items-center justify-between"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`flex h-8 w-8 items-center justify-center rounded-full ${
+                            item.type === "movie"
+                              ? "bg-blue-500/10"
+                              : "bg-rose-500/10"
+                          }`}
+                        >
+                          {item.type === "movie" ? (
+                            <Film
+                              className={`h-4 w-4 ${item.type === "movie" ? "text-blue-500" : "text-rose-500"}`}
+                            />
+                          ) : (
+                            <Tv
+                              className={`h-4 w-4 ${item.type === "movie" ? "text-blue-500" : "text-rose-500"}`}
+                            />
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium">{item.title}</p>
+                          <p className="text-muted-foreground text-xs capitalize">
+                            {item.type}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-sm font-medium">
+                        {item.views.toLocaleString()}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline" size="sm" asChild className="w-full">
+                  <Link href="/admin/analytics">View All Stats</Link>
+                </Button>
+              </CardFooter>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Recent Activity</CardTitle>
+                <CardDescription>Latest user interactions</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {recentActivity.map((activity, i) => (
+                    <div key={i} className="flex items-start gap-3">
+                      <div className="bg-primary/10 flex h-8 w-8 items-center justify-center rounded-full">
+                        <Users className="text-primary h-4 w-4" />
+                      </div>
+                      <div>
+                        <p className="text-sm">
+                          <span className="font-medium">{activity.user}</span>{" "}
+                          {activity.action}{" "}
+                          {activity.content && (
+                            <span className="font-medium">
+                              {activity.content}
+                            </span>
+                          )}
+                        </p>
+                        <p className="text-muted-foreground text-xs">
+                          {activity.time}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+              <CardFooter>
+                <Button variant="outline" size="sm" asChild className="w-full">
+                  <Link href="/admin/logs">View All Activity</Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          </div>
+        </TabsContent>
+
+        {/* Activity Tab */}
+        <TabsContent value="activity" className="h-full">
+          <Card className="h-full">
+            <CardHeader>
+              <CardTitle>User Activity</CardTitle>
+              <CardDescription>
+                Detailed view of user interactions with your content
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="p-8 text-center">
+                <p className="text-muted-foreground">
+                  Activity panel content will be displayed here
+                </p>
+                <Button className="mt-4" asChild>
+                  <Link href="/admin/logs">Go to Activity Logs</Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Content Tab */}
+        <TabsContent value="content" className="h-full">
+          <Card className="h-full">
+            <CardHeader>
+              <CardTitle>Content Management</CardTitle>
+              <CardDescription>
+                Quick access to your content library
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-2">
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="h-24 flex-col gap-2"
+                  asChild
+                >
+                  <Link href="/admin/movies">
+                    <Film className="h-6 w-6" />
+                    <div>
+                      <div className="font-semibold">Movies</div>
+                      <div className="text-muted-foreground text-xs">
+                        Manage your movie catalog
+                      </div>
+                    </div>
+                  </Link>
+                </Button>
+                <Button
+                  size="lg"
+                  variant="outline"
+                  className="h-24 flex-col gap-2"
+                  asChild
+                >
+                  <Link href="/admin/series">
+                    <Tv className="h-6 w-6" />
+                    <div>
+                      <div className="font-semibold">TV Series</div>
+                      <div className="text-muted-foreground text-xs">
+                        Manage your series catalog
+                      </div>
+                    </div>
+                  </Link>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
-  );
-}
-
-// Movie row component
-function MovieRow({ movie }: { movie: Movie }) {
-  const [imgError, setImgError] = useState(false);
-  const formattedDate = new Date(movie.releaseDate).toLocaleDateString();
-
-  const getPosterUrl = () => {
-    if (imgError) return "/placeholder-poster.jpg";
-    return movie.posterPath.startsWith("/")
-      ? `https://image.tmdb.org/t/p/w92${movie.posterPath}`
-      : movie.posterPath || "/placeholder-poster.jpg";
-  };
-
-  return (
-    <tr className="border-b border-zinc-800">
-      <td className="py-3 pr-4">
-        <div className="flex items-center">
-          <div className="mr-3 h-14 w-10 flex-shrink-0 overflow-hidden rounded">
-            <Image
-              src={getPosterUrl()}
-              alt={movie.title}
-              width={40}
-              height={56}
-              className="h-full w-full object-cover"
-              onError={() => setImgError(true)}
-            />
-          </div>
-          <div className="max-w-[120px] truncate sm:max-w-[200px]">
-            <p className="truncate font-medium">{movie.title}</p>
-            <p className="truncate text-xs text-zinc-400">
-              {movie.genres.map((g) => g.name).join(", ")}
-            </p>
-          </div>
-        </div>
-      </td>
-      <td className="hidden px-4 py-3 md:table-cell">{formattedDate}</td>
-      <td className="hidden px-4 py-3 sm:table-cell">{movie.rating}</td>
-      <td className="hidden px-4 py-3 lg:table-cell">
-        {movie.popularity.toFixed(1)}
-      </td>
-      <td className="py-3 pl-4 text-right">
-        <div className="flex justify-end gap-2">
-          <Button size="icon" className="text-zinc-400 hover:text-white">
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button size="icon" className="text-zinc-400 hover:text-red-500">
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      </td>
-    </tr>
-  );
-}
-
-// Series row component
-function SeriesRow({ series }: { series: Series }) {
-  const [imgError, setImgError] = useState(false);
-  const formattedDate = new Date(series.firstAirDate).toLocaleDateString();
-
-  const getPosterUrl = () => {
-    if (imgError) return "/placeholder-poster.jpg";
-    return series.posterPath.startsWith("/")
-      ? `https://image.tmdb.org/t/p/w92${series.posterPath}`
-      : series.posterPath || "/placeholder-poster.jpg";
-  };
-
-  return (
-    <tr className="border-b border-zinc-800">
-      <td className="py-3 pr-4">
-        <div className="flex items-center">
-          <div className="mr-3 h-14 w-10 flex-shrink-0 overflow-hidden rounded">
-            <Image
-              src={getPosterUrl()}
-              alt={series.title}
-              width={40}
-              height={56}
-              className="h-full w-full object-cover"
-              onError={() => setImgError(true)}
-            />
-          </div>
-          <div className="max-w-[120px] truncate sm:max-w-[200px]">
-            <p className="truncate font-medium">{series.title}</p>
-            <p className="truncate text-xs text-zinc-400">
-              {series.genres.map((g) => g.name).join(", ")}
-            </p>
-          </div>
-        </div>
-      </td>
-      <td className="hidden px-4 py-3 md:table-cell">{formattedDate}</td>
-      <td className="hidden px-4 py-3 sm:table-cell">{series.status}</td>
-      <td className="hidden px-4 py-3 lg:table-cell">
-        {series.seasons.length}
-      </td>
-      <td className="py-3 pl-4 text-right">
-        <div className="flex justify-end gap-2">
-          <Button size="icon" className="text-zinc-400 hover:text-white">
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button size="icon" className="text-zinc-400 hover:text-red-500">
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        </div>
-      </td>
-    </tr>
   );
 }
